@@ -220,8 +220,8 @@
           <div class="form-group"><label>Nom complet</label><input type="text" id="clientName" required></div>
           <div class="form-group"><label>Email</label><input type="email" id="clientEmail" required></div>
           <div class="form-group"><label>Téléphone WhatsApp</label><input type="tel" id="clientPhone" required></div>
-          <div class="form-group"><label>Type de séance</label><select id="sessionType"><option>Portrait</option><option>Mariage</option><option>Anniversaire</option><option>Grossesse</option><option>Baptême</option></select></div>
-          <button type="submit" class="btn-primary">📩 Envoyer la demande</button>
+          <div class="form-group"><label>Type de séance</label><select id="sessionType"><option>Portrait</option><option>Mariage</option><option>Anniversaire</option></select></div>
+          <button type="submit" class="btn-primary">📩 Envoyer</button>
         </form>
       </div>
     </div>
@@ -235,9 +235,9 @@
     </div>
 
     <div id="contactSection" style="display:none;">
-      <div class="hero"><h2>📞 Contactez-nous</h2></div>
+      <div class="hero"><h2>📞 Contact</h2></div>
       <div class="form-container" style="text-align:center;">
-        <p style="font-size:1.5rem; margin-bottom:20px;"><i class="fab fa-whatsapp" style="color:#25D366;"></i> <strong>+269 431 99 42</strong></p>
+        <p style="font-size:1.5rem;"><i class="fab fa-whatsapp" style="color:#25D366;"></i> +269 431 99 42</p>
         <div class="social-links">
           <a href="https://www.facebook.com/share/1BWwGYvEhG/" target="_blank"><i class="fab fa-facebook"></i></a>
           <a href="https://www.instagram.com/jeff_le_mze/" target="_blank"><i class="fab fa-instagram"></i></a>
@@ -284,69 +284,60 @@
 
   <div style="margin-bottom: 25px; padding: 20px; background: var(--bg-card); border-radius: 16px;">
     <h4>📅 Créer un événement client</h4>
-    <div class="form-group">
-      <label>Nom du client</label>
-      <input type="text" id="eventClientName" placeholder="Ex: Jean Dupont" style="width:100%; padding:10px; margin:5px 0; background:var(--bg-primary); border:1px solid var(--accent); border-radius:8px;">
-    </div>
-    <div class="form-group">
-      <label>Type d'événement</label>
-      <input type="text" id="eventName" placeholder="Ex: Mariage, Anniversaire, Baptême..." style="width:100%; padding:10px; margin:5px 0; background:var(--bg-primary); border:1px solid var(--accent); border-radius:8px;">
-    </div>
-    <button class="btn-primary" id="createEventBtn">✅ Générer un code unique</button>
+    <input type="text" id="newClientName" placeholder="Nom du client" style="width:100%; padding:10px; margin:8px 0; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:white;">
+    <input type="text" id="newEventName" placeholder="Type d'événement" style="width:100%; padding:10px; margin:8px 0; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:white;">
+    <button class="btn-primary" id="createEventBtn">✅ Générer un code</button>
     
     <div id="generatedCodeDisplay" style="display:none;" class="code-display">
-      <p style="margin-bottom:5px;">📋 CODE GÉNÉRÉ À ENVOYER AU CLIENT :</p>
+      <p>📋 CODE :</p>
       <span id="generatedCode"></span>
-      <button id="copyGeneratedCodeBtn" class="copy-btn" style="margin-left:10px;">📋 Copier</button>
+      <button id="copyGeneratedCodeBtn" class="copy-btn">📋 Copier</button>
     </div>
   </div>
 
   <h4>📋 Événements clients</h4>
-  <input type="text" id="eventSearch" class="search-input" placeholder="🔍 Rechercher un événement ou client...">
-  <div id="eventList" class="event-list">
-    <div style="text-align:center; padding:20px;">Aucun événement</div>
-  </div>
+  <input type="text" id="eventSearch" class="search-input" placeholder="🔍 Rechercher...">
+  <div id="eventList" class="event-list">Aucun événement</div>
 
   <div style="margin: 20px 0; padding: 20px; background: var(--bg-card); border-radius: 16px;">
-    <h4>📤 Ajouter des photos à l'événement sélectionné</h4>
-    <p style="font-size:12px; margin-bottom:10px; color:var(--accent);" id="selectedEventDisplay">⬅️ Cliquez sur un événement ci-dessus</p>
+    <h4>📤 Ajouter des photos</h4>
+    <p id="selectedEventName" style="color:var(--accent); font-size:11px;">⬅️ Cliquez sur un événement</p>
     <div class="upload-area" id="privateUploadArea">
-      <i class="fas fa-cloud-upload-alt" style="font-size:48px; color:var(--accent);"></i>
-      <p>📤 Glissez vos photos ICI (privées - client uniquement)</p>
-      <p style="font-size:12px;">ou cliquez pour sélectionner</p>
+      <i class="fas fa-cloud-upload-alt" style="font-size:48px;"></i>
+      <p>Glissez ou cliquez</p>
       <input type="file" id="privateFileInput" multiple accept="image/*" style="display:none">
     </div>
   </div>
 
-  <h4>📷 Photos de l'événement sélectionné (privées)</h4>
-  <div id="adminMediaList" style="max-height:300px; overflow-y:auto;"></div>
+  <h4>📷 Photos de l'événement</h4>
+  <div id="adminMediaList"></div>
 
-  <hr style="margin: 20px 0; border-color: #333;">
+  <hr style="margin:15px 0;">
 
   <h4>🌍 Portfolio public</h4>
-  <select id="publicGallerySelect" style="width:100%; padding:10px; margin:10px 0; background:var(--bg-card); border:1px solid var(--accent); border-radius:8px;">
-    <option value="portraits">📸 Portraits</option>
-    <option value="events_public">🎉 Événements publics</option>
-    <option value="lifestyle">🌿 Lifestyle</option>
+  <select id="publicGallerySelect" style="width:100%; padding:10px; margin:10px 0; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:white;">
+    <option value="portraits">Portraits</option>
+    <option value="events">Événements</option>
+    <option value="lifestyle">Lifestyle</option>
   </select>
-  <div class="upload-area" id="publicUploadArea" style="border-color: #10b981;">
+  <div class="upload-area" id="publicUploadArea">
     <i class="fas fa-globe" style="font-size:48px; color:#10b981;"></i>
-    <p>📤 Ajouter des photos au PORTFOLIO PUBLIC</p>
+    <p>Ajouter au portfolio</p>
     <input type="file" id="publicFileInput" multiple accept="image/*" style="display:none">
   </div>
-  
-  <h4>📷 Photos publiques actuelles</h4>
-  <div id="publicMediaList" style="max-height:200px; overflow-y:auto;"></div>
+  <div id="publicPhotosList"></div>
+
+  <button id="logoutAdminBtn" class="btn-primary btn-danger" style="margin-top:15px;">Déconnexion</button>
 </div>
 
-<div id="mediaModal" class="modal">
+<div id="imageModal" class="modal">
   <span class="close-modal" onclick="closeModal()">&times;</span>
   <div class="modal-content">
     <img id="modalImage" src="">
     <div class="modal-controls">
-      <button id="modalPrevBtn"><i class="fas fa-chevron-left"></i> Précédent</button>
-      <button id="modalDownloadBtn"><i class="fas fa-download"></i> Télécharger</button>
-      <button id="modalNextBtn">Suivant <i class="fas fa-chevron-right"></i></button>
+      <button id="modalPrevBtn">◀ Précédent</button>
+      <button id="modalDownloadBtn">📥 Télécharger</button>
+      <button id="modalNextBtn">Suivant ▶</button>
     </div>
   </div>
 </div>
@@ -399,25 +390,31 @@
     });
   }
 
-  // Téléchargement compatible iPhone
-  function downloadImage(dataUrl, filename) {
-    // Pour iPhone, on utilise l'API Share ou un lien
-    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-      // Sur iPhone, on ouvre l'image dans un nouvel onglet
+  // Téléchargement compatible avec Safari (iPhone)
+  async function downloadImage(dataUrl, filename) {
+    try {
+      // Convertir dataURL en blob
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      
+      // Créer un objet URL
+      const url = URL.createObjectURL(blob);
+      
+      // Créer un lien temporaire
       const link = document.createElement('a');
-      link.href = dataUrl;
+      link.href = url;
       link.download = filename;
       link.target = '_blank';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    } else {
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      
+      // Nettoyer l'URL après un délai
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    } catch(e) {
+      console.error("Erreur téléchargement:", e);
+      // Fallback: ouvrir dans un nouvel onglet
+      window.open(dataUrl, '_blank');
     }
   }
 
@@ -460,7 +457,7 @@
   function renderPublicGallery() {
     const items = allPhotos[currentGallery] || [];
     const container = document.getElementById('galleryContainer');
-    if (items.length === 0) { container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px;">✨ Aucune photo</div>'; return; }
+    if (items.length === 0) { container.innerHTML = '<div style="text-align:center; grid-column:1/-1; padding:60px;">✨ Aucune photo</div>'; return; }
     container.innerHTML = items.map((item, idx) => `
       <div class="gallery-item">
         <img src="${item.data}" onclick="openModalWithPhotos(${idx}, '${currentGallery}')">
@@ -533,7 +530,7 @@
       dataUrl = await compressImage(dataUrl);
       await db.collection('publicPhotos').add({ category, data: dataUrl, name: file.name, timestamp: Date.now() });
       await loadData();
-      alert('✅ Photo ajoutée au portfolio !');
+      alert('✅ Photo ajoutée !');
     } catch(e) { alert('Erreur: ' + e.message); }
   }
 
@@ -544,20 +541,20 @@
       const photoId = `${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
       await db.collection('privateEvents').doc(code).collection('photos').doc(photoId).set({ data: dataUrl, name: file.name, timestamp: Date.now() });
       await loadData();
-      await renderEventPhotos();
-      alert('✅ Photo ajoutée à l\'événement !');
+      if (selectedEventCode === code) await renderEventPhotos();
+      alert('✅ Photo ajoutée !');
     } catch(e) { alert('Erreur: ' + e.message); }
   }
 
   window.deletePublicPhoto = async (gallery, id) => {
-    if (confirm('Supprimer cette photo ?')) {
+    if (confirm('Supprimer ?')) {
       await db.collection('publicPhotos').doc(id).delete();
       await loadData();
     }
   };
 
   window.deleteEventPhoto = async (eventCode, photoId) => {
-    if (confirm('Supprimer cette photo ?')) {
+    if (confirm('Supprimer ?')) {
       await db.collection('privateEvents').doc(eventCode).collection('photos').doc(photoId).delete();
       await loadData();
       if (selectedEventCode === eventCode) await renderEventPhotos();
@@ -565,13 +562,13 @@
   };
 
   window.deleteEvent = async (eventCode) => {
-    if (confirm(`⚠️ Supprimer "${privateEvents[eventCode]?.eventName}" et toutes ses photos ? Cette action est irréversible.`)) {
+    if (confirm(`⚠️ Supprimer "${privateEvents[eventCode]?.eventName}" et toutes ses photos ?`)) {
       const photos = await db.collection('privateEvents').doc(eventCode).collection('photos').get();
       for (const doc of photos.docs) await doc.ref.delete();
       await db.collection('privateEvents').doc(eventCode).delete();
       if (selectedEventCode === eventCode) {
         selectedEventCode = null;
-        document.getElementById('selectedEventDisplay').innerHTML = '⬅️ Cliquez sur un événement';
+        document.getElementById('selectedEventName').innerHTML = '⬅️ Cliquez sur un événement';
         document.getElementById('adminMediaList').innerHTML = '<div style="padding:20px;">Sélectionnez un événement</div>';
       }
       await loadData();
@@ -580,24 +577,24 @@
   };
 
   window.createEvent = async () => {
-    const client = document.getElementById('eventClientName').value;
-    const type = document.getElementById('eventName').value;
+    const client = document.getElementById('newClientName').value;
+    const type = document.getElementById('newEventName').value;
     if (!client || !type) { alert('Remplissez tous les champs'); return; }
     const code = `${type.toUpperCase().replace(/\s/g, '_')}_${client.toUpperCase().replace(/\s/g, '_')}_${Date.now()}`;
     await db.collection('privateEvents').doc(code).set({ clientName: client, eventName: type, code: code });
     document.getElementById('generatedCodeDisplay').style.display = 'block';
     document.getElementById('generatedCode').innerHTML = code;
-    document.getElementById('eventClientName').value = '';
-    document.getElementById('eventName').value = '';
+    document.getElementById('newClientName').value = '';
+    document.getElementById('newEventName').value = '';
     await loadData();
-    alert(`✅ Événement créé !\n\nCode : ${code}\n\nEnvoyez ce code au client.`);
+    alert(`✅ Événement créé !\nCode: ${code}`);
   };
 
   window.selectEvent = async (code) => {
     selectedEventCode = code;
     renderEventList();
     const event = privateEvents[code];
-    if (event) document.getElementById('selectedEventDisplay').innerHTML = `✅ ${event.eventName} - ${event.clientName}`;
+    if (event) document.getElementById('selectedEventName').innerHTML = `✅ ${event.eventName} - ${event.clientName}`;
     await renderEventPhotos();
   };
 
@@ -611,16 +608,12 @@
     const photosSnap = await db.collection('privateEvents').doc(code).collection('photos').orderBy('timestamp', 'asc').get();
     const photos = []; photosSnap.forEach(doc => photos.push({ id: doc.id, ...doc.data() }));
     const container = document.getElementById('privateGalleryContainer');
-    if (photos.length === 0) { container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px;">📭 Aucune photo</div>'; return; }
-    container.innerHTML = `
-      <h3>📸 ${event.eventName}</h3>
-      <p style="color: var(--accent); margin-bottom:20px;">Client : ${event.clientName}</p>
-      <div class="gallery-grid" id="privateGrid"></div>
-    `;
+    if (photos.length === 0) { container.innerHTML = '<div style="text-align:center; padding:40px;">📭 Aucune photo</div>'; return; }
+    container.innerHTML = `<h3>📸 ${event.eventName}</h3><p>Client : ${event.clientName}</p><div class="gallery-grid" id="privateGrid"></div>`;
     const grid = document.getElementById('privateGrid');
     grid.innerHTML = photos.map(photo => `
       <div class="gallery-item" style="position:relative">
-        <img src="${photo.data}" onclick="openModal('${photo.data}', '${photo.name}')">
+        <img src="${photo.data}" onclick="downloadImage('${photo.data}', '${photo.name}')">
         <button class="client-download-btn" onclick="event.stopPropagation(); downloadImage('${photo.data}', '${photo.name}')"><i class="fas fa-download"></i></button>
       </div>
     `).join('');
@@ -643,7 +636,7 @@
     zip.generateAsync({ type: "blob" }).then(content => {
       const link = document.createElement('a');
       link.href = URL.createObjectURL(content);
-      link.download = `realfocus_selected_${Date.now()}.zip`;
+      link.download = `realfocus_${Date.now()}.zip`;
       link.click();
       alert(`✅ ${count} photo(s) téléchargée(s) !`);
     });
@@ -671,7 +664,7 @@
         alert(`✅ ${count} favori(s) téléchargé(s) !`);
       });
     } else {
-      alert('Aucune photo sélectionnée ou en favori');
+      alert('Aucune sélection');
     }
   }
 
@@ -685,7 +678,6 @@
     localStorage.setItem('selectedPhotos', JSON.stringify(selectedPhotos));
     renderPublicGallery();
     updateStats();
-    document.getElementById('selectedCountBadge').innerHTML = `📦 ${selectedPhotos.length}`;
   };
 
   function toggleFavorite(id, event) {
@@ -702,13 +694,8 @@
     currentModalIndex = index;
     if (currentModalPhotos[currentModalIndex]) {
       document.getElementById('modalImage').src = currentModalPhotos[currentModalIndex].data;
-      document.getElementById('mediaModal').style.display = 'flex';
+      document.getElementById('imageModal').style.display = 'flex';
     }
-  };
-
-  window.openModal = (data, name) => {
-    document.getElementById('modalImage').src = data;
-    document.getElementById('mediaModal').style.display = 'flex';
   };
 
   function modalPrev() {
@@ -725,7 +712,7 @@
     }
   }
 
-  function closeModal() { document.getElementById('mediaModal').style.display = 'none'; }
+  function closeModal() { document.getElementById('imageModal').style.display = 'none'; }
 
   window.showSection = (section) => {
     document.getElementById('portfolioSection').style.display = section === 'portfolio' ? 'block' : 'none';
@@ -768,21 +755,15 @@
   document.getElementById('createEventBtn').onclick = () => window.createEvent();
   document.getElementById('copyGeneratedCodeBtn').onclick = () => window.copyGeneratedCode();
   document.getElementById('cartBtn').onclick = showCart;
-  
   document.getElementById('eventSearch').addEventListener('input', () => renderEventList());
 
-  // Upload privé
+  // Upload
   const privateUpload = document.getElementById('privateUploadArea'), privateInput = document.getElementById('privateFileInput');
   privateUpload.onclick = () => { if (selectedEventCode) privateInput.click(); else alert('Sélectionnez un événement'); };
   privateInput.onchange = (e) => { if (selectedEventCode) for (let f of e.target.files) addPrivatePhoto(f, selectedEventCode); privateInput.value = ''; };
   privateUpload.ondragover = (e) => e.preventDefault();
-  privateUpload.ondrop = (e) => {
-    e.preventDefault();
-    if (!selectedEventCode) { alert('Sélectionnez un événement'); return; }
-    for (let f of e.dataTransfer.files) addPrivatePhoto(f, selectedEventCode);
-  };
+  privateUpload.ondrop = (e) => { e.preventDefault(); if (selectedEventCode) for (let f of e.dataTransfer.files) addPrivatePhoto(f, selectedEventCode); else alert('Sélectionnez un événement'); };
 
-  // Upload public
   const publicUpload = document.getElementById('publicUploadArea'), publicInput = document.getElementById('publicFileInput');
   publicUpload.onclick = () => publicInput.click();
   publicInput.onchange = (e) => {
@@ -791,25 +772,15 @@
     publicInput.value = '';
   };
   publicUpload.ondragover = (e) => e.preventDefault();
-  publicUpload.ondrop = (e) => {
-    e.preventDefault();
-    const gallery = document.getElementById('publicGallerySelect').value;
-    for (let f of e.dataTransfer.files) addPublicPhoto(f, gallery);
-  };
+  publicUpload.ondrop = (e) => { e.preventDefault(); const gallery = document.getElementById('publicGallerySelect').value; for (let f of e.dataTransfer.files) addPublicPhoto(f, gallery); };
   document.getElementById('publicGallerySelect').onchange = () => renderPublicMediaList();
 
-  // Devis
   document.getElementById('devisForm').onsubmit = (e) => {
     e.preventDefault();
-    const name = document.getElementById('clientName').value;
-    const phone = document.getElementById('clientPhone').value;
-    const type = document.getElementById('sessionType').value;
-    window.open(`https://wa.me/2694319942?text=Devis%20pour%20${name}%20-%20Tel%20${phone}%20-%20${type}`);
-    alert('✅ Demande envoyée ! Réponse sous 24h.');
-    e.target.reset();
+    window.open(`https://wa.me/2694319942?text=Devis%20pour%20${document.getElementById('clientName').value}%20-%20Tel%20${document.getElementById('clientPhone').value}`);
+    alert('Demande envoyée !'); e.target.reset();
   };
 
-  // Modal
   document.querySelector('.close-modal').onclick = closeModal;
   document.getElementById('modalDownloadBtn').onclick = () => {
     const img = document.getElementById('modalImage');
@@ -819,7 +790,7 @@
   document.getElementById('modalNextBtn').onclick = modalNext;
   window.closeModal = closeModal;
 
-  // Theme toggle
+  // Theme
   let isDark = true;
   document.getElementById('themeBtn').onclick = () => {
     isDark = !isDark;
