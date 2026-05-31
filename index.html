@@ -48,7 +48,6 @@
     .nav-links li { cursor: pointer; padding: 8px 16px; border-radius: 40px; transition: 0.3s; }
     .nav-links li:hover { color: var(--accent); background: rgba(192, 160, 64, 0.1); }
     
-    /* Bouton retour flottant */
     .back-button {
       position: fixed;
       top: 80px;
@@ -60,7 +59,7 @@
       cursor: pointer;
       z-index: 1000;
       font-size: 14px;
-      display: flex;
+      display: none;
       align-items: center;
       gap: 8px;
       transition: 0.2s;
@@ -68,8 +67,8 @@
       font-weight: 500;
     }
     .back-button:hover { background: var(--accent); color: black; transform: translateX(-3px); }
+    .back-button.visible { display: flex; }
     
-    /* Bouton retour dans l'admin panel */
     .admin-back-btn {
       background: var(--accent);
       color: black;
@@ -223,9 +222,8 @@
 
 <div class="cloud-status" id="cloudStatus">☁️ Synchronisation...</div>
 
-<!-- Bouton retour flottant (visible seulement quand on est dans l'espace client) -->
-<div class="back-button" id="backBtn" style="display: none;">
-  <i class="fas fa-arrow-left"></i> Retour
+<div class="back-button" id="backBtn">
+  <i class="fas fa-arrow-left"></i> Retour à l'accueil
 </div>
 
 <header>
@@ -319,9 +317,8 @@
     <button id="closeAdminBtn" style="background:none; border:none; color:white; font-size:28px; cursor:pointer;">&times;</button>
   </div>
 
-  <!-- Bouton de retour dans l'admin panel -->
   <button id="adminBackToSiteBtn" class="admin-back-btn">
-    <i class="fas fa-arrow-left"></i> Retour au site
+    <i class="fas fa-arrow-left"></i> ✖ Fermer l'administration
   </button>
 
   <button id="logoutAdminBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
@@ -368,7 +365,7 @@
   <h4>🌍 Portfolio public</h4>
   <select id="publicGallerySelect" style="width:100%; padding:10px; margin:10px 0; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:white;">
     <option value="portraits">Portraits</option>
-    <option value="events">Événements</option>
+    <option value="events_public">Événements</option>
     <option value="lifestyle">Lifestyle</option>
   </select>
   <div class="upload-area" id="publicUploadArea">
@@ -377,8 +374,6 @@
     <input type="file" id="publicFileInput" multiple accept="image/*" style="display:none">
   </div>
   <div id="publicPhotosList"></div>
-
-  <button id="logoutAdminBtn" class="btn-primary btn-danger" style="margin-top:15px;">Déconnexion</button>
 </div>
 
 <div id="imageModal" class="modal">
@@ -417,33 +412,29 @@
   let currentModalIndex = 0;
   let isInPrivateGallery = false;
 
-  // Fonction pour afficher/masquer le bouton retour
   function updateBackButton() {
     const backBtn = document.getElementById('backBtn');
     if (isInPrivateGallery) {
-      backBtn.style.display = 'flex';
+      backBtn.classList.add('visible');
     } else {
-      backBtn.style.display = 'none';
+      backBtn.classList.remove('visible');
     }
   }
 
-  // Retour à l'accueil depuis l'espace client
   function goBackToHome() {
     isInPrivateGallery = false;
     updateBackButton();
     showSection('portfolio');
-    // Réinitialiser l'affichage de l'espace client
     const clientContainer = document.getElementById('privateGalleryContainer');
     clientContainer.innerHTML = '';
     document.getElementById('accessCode').value = '';
   }
 
-  // Retour au site depuis l'admin panel
-  function closeAdminAndGoBack() {
+  function closeAdminPanel() {
     document.getElementById('adminPanel').classList.remove('open');
   }
 
-  function compressImage(dataUrl, maxWidth = 800, quality = 0.6) {
+  async function compressImage(dataUrl, maxWidth = 800, quality = 0.6) {
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
@@ -468,7 +459,6 @@
     });
   }
 
-  // Téléchargement compatible avec Safari (iPhone)
   async function downloadImage(dataUrl, filename) {
     try {
       const response = await fetch(dataUrl);
@@ -483,7 +473,6 @@
       document.body.removeChild(link);
       setTimeout(() => URL.revokeObjectURL(url), 100);
     } catch(e) {
-      console.error("Erreur téléchargement:", e);
       window.open(dataUrl, '_blank');
     }
   }
@@ -541,15 +530,25 @@
   function renderPublicMediaList() {
     const gallery = document.getElementById('publicGallerySelect').value;
     const items = allPhotos[gallery] || [];
-    const container = document.getElementById('publicMediaList');
-    if (items.length === 0) { container.innerHTML = '<div style="padding:20px;">Aucune photo</div>'; return; }
-    container.innerHTML = items.map(item => `
-      <div class="photo-item">
-        <img src="${item.data}">
-        <div style="flex:1; font-size:12px;">${item.name.substring(0,30)}</div>
-        <button onclick="deletePublicPhoto('${gallery}', '${item.id}')" class="delete-photo-btn">🗑️</button>
-      </div>
-    `).join('');
+    const container = document.getElementById('publicPhotosList');
+    if (!container) return;
+    if (items.length === 0) { 
+      container.innerHTML = '<div style="padding:20px; text-align:center;">Aucune photo publique</div>'; 
+      return; 
+    }
+    let html = '';
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (!item || !item.data) continue;
+      html += `
+        <div class="photo-item">
+          <img src="${item.data}" loading="lazy">
+          <div style="flex:1; font-size:12px;">${(item.name || 'Photo').substring(0,30)}</div>
+          <button onclick="deletePublicPhoto('${gallery}', '${item.id}')" class="delete-photo-btn">🗑️</button>
+        </div>
+      `;
+    }
+    container.innerHTML = html;
   }
 
   function renderEventList() {
@@ -600,7 +599,7 @@
       dataUrl = await compressImage(dataUrl);
       await db.collection('publicPhotos').add({ category, data: dataUrl, name: file.name, timestamp: Date.now() });
       await loadData();
-      alert('✅ Photo ajoutée !');
+      alert('✅ Photo ajoutée au portfolio !');
     } catch(e) { alert('Erreur: ' + e.message); }
   }
 
@@ -612,19 +611,19 @@
       await db.collection('privateEvents').doc(code).collection('photos').doc(photoId).set({ data: dataUrl, name: file.name, timestamp: Date.now() });
       await loadData();
       if (selectedEventCode === code) await renderEventPhotos();
-      alert('✅ Photo ajoutée !');
+      alert('✅ Photo ajoutée à l\'événement !');
     } catch(e) { alert('Erreur: ' + e.message); }
   }
 
   window.deletePublicPhoto = async (gallery, id) => {
-    if (confirm('Supprimer ?')) {
+    if (confirm('Supprimer cette photo ?')) {
       await db.collection('publicPhotos').doc(id).delete();
       await loadData();
     }
   };
 
   window.deleteEventPhoto = async (eventCode, photoId) => {
-    if (confirm('Supprimer ?')) {
+    if (confirm('Supprimer cette photo ?')) {
       await db.collection('privateEvents').doc(eventCode).collection('photos').doc(photoId).delete();
       await loadData();
       if (selectedEventCode === eventCode) await renderEventPhotos();
@@ -809,6 +808,8 @@
       sessionStorage.setItem('adminAuth', 'true');
       document.getElementById('passwordModal').style.display = 'none';
       document.getElementById('adminPanel').classList.add('open');
+      renderEventList();
+      renderPublicMediaList();
     } else document.getElementById('passwordError').style.display = 'block';
   };
   
@@ -829,8 +830,7 @@
   document.getElementById('cartBtn').onclick = showCart;
   document.getElementById('eventSearch').addEventListener('input', () => renderEventList());
   
-  // Boutons retour
-  document.getElementById('adminBackToSiteBtn').onclick = closeAdminAndGoBack;
+  document.getElementById('adminBackToSiteBtn').onclick = closeAdminPanel;
   document.getElementById('backBtn').onclick = goBackToHome;
 
   // Upload
@@ -866,7 +866,6 @@
   document.getElementById('modalNextBtn').onclick = modalNext;
   window.closeModal = closeModal;
 
-  // Theme
   let isDark = true;
   document.getElementById('themeBtn').onclick = () => {
     isDark = !isDark;
