@@ -203,7 +203,6 @@
     <div class="dashboard-card"><div class="dashboard-number" id="statPhotos">0</div><div>Photos</div></div>
     <div class="dashboard-card"><div class="dashboard-number" id="statEvents">0</div><div>Événements</div></div>
     <div class="dashboard-card"><div class="dashboard-number" id="statClients">0</div><div>Clients</div></div>
-    <div class="dashboard-card"><div class="dashboard-number" id="statStorage">0</div><div>Mo</div></div>
   </div>
 
   <h4>📅 Créer un événement client</h4>
@@ -212,17 +211,17 @@
   <button id="createEventBtn" class="btn-primary">✅ Générer un code</button>
 
   <h4 style="margin-top:20px;">📋 Événements clients</h4>
-  <input type="text" id="eventSearch" class="search-input" placeholder="🔍 Rechercher un événement...">
+  <input type="text" id="eventSearch" class="search-input" placeholder="🔍 Rechercher...">
   <div id="eventsList"></div>
 
-  <h4 style="margin-top:20px;">📤 Ajouter des photos (ILLIMITÉ)</h4>
+  <h4 style="margin-top:20px;">📤 Ajouter des photos</h4>
   <p id="selectedEventName" style="color:var(--accent); font-size:11px;">⬅️ Cliquez sur un événement</p>
   <div id="privateUploadArea" class="upload-area">
     <span>📸</span>
-    <p>Glissez ou cliquez - Photos stockées dans le cloud</p>
+    <p>Glissez ou cliquez</p>
     <input type="file" id="privateFileInput" multiple accept="image/*" style="display:none">
   </div>
-  <div id="uploadProgress" style="display:none; margin:10px 0;"><span class="loading"></span> Upload en cours...</div>
+  <div id="uploadProgress" style="display:none; margin:10px 0;"><span class="loading"></span> Upload...</div>
 
   <h4>📷 Photos de l'événement</h4>
   <div id="eventPhotosList"></div>
@@ -247,11 +246,10 @@
 
 <div id="passwordModal" class="password-overlay">
   <div class="password-box">
-    <h3>🔐 Accès Administrateur</h3>
-    <p style="font-size:12px; margin-bottom:10px;">Réservé au photographe</p>
+    <h3>🔐 Accès Admin</h3>
     <input type="password" id="adminPassword" placeholder="Mot de passe">
     <button id="submitPassword" class="btn-primary">Se connecter</button>
-    <p style="margin-top:10px; font-size:11px; color:#666;">Mot de passe: realfocus2025</p>
+    <p style="margin-top:10px; font-size:11px;">Mot de passe: realfocus2025</p>
   </div>
 </div>
 
@@ -259,9 +257,9 @@
   <span class="modal-close">&times;</span>
   <img id="modalImage" src="">
   <div class="modal-controls">
-    <button id="modalPrevBtn">◀ Précédent</button>
-    <button id="modalDownloadBtn">📥 Télécharger</button>
-    <button id="modalNextBtn">Suivant ▶</button>
+    <button id="modalPrevBtn">◀</button>
+    <button id="modalDownloadBtn">📥</button>
+    <button id="modalNextBtn">▶</button>
   </div>
 </div>
 
@@ -287,23 +285,14 @@
     let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     let selectedPhotos = JSON.parse(localStorage.getItem('selectedPhotos') || '[]');
     let adminAuthenticated = false;
-    let publicPhotosCache = { portraits: [], events: [], lifestyle: [] };
-    let eventsCache = {};
-    let currentModalIndex = 0;
-    let currentModalPhotos = [];
+    let publicPhotos = { portraits: [], events: [], lifestyle: [] };
+    let privateEvents = {};
 
     function isAdmin() { return adminAuthenticated || sessionStorage.getItem('adminAuth') === 'true'; }
     
     function requireAdmin() {
       if (!isAdmin()) { document.getElementById('passwordModal').style.display = 'flex'; return false; }
       return true;
-    }
-    
-    function logoutAdmin() {
-      adminAuthenticated = false;
-      sessionStorage.removeItem('adminAuth');
-      document.getElementById('adminPanel').classList.remove('open');
-      alert('Déconnecté.');
     }
 
     async function uploadToStorage(file, path) {
@@ -312,51 +301,32 @@
       return await snapshot.ref.getDownloadURL();
     }
 
-    function fileToDataURL(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    async function loadAllData() {
-      await Promise.all([loadPublicPhotos(), loadPrivateEvents()]);
-      updateDashboard();
-      document.getElementById('cloudStatus').innerHTML = '☁️ Synchro ✓';
-      setTimeout(() => { document.getElementById('cloudStatus').style.opacity = '0.5'; }, 2000);
-    }
-
     async function loadPublicPhotos() {
       const snapshot = await db.collection('publicPhotos').get();
-      publicPhotosCache = { portraits: [], events: [], lifestyle: [] };
+      publicPhotos = { portraits: [], events: [], lifestyle: [] };
       snapshot.forEach(doc => {
         const data = doc.data();
-        if (publicPhotosCache[data.category]) publicPhotosCache[data.category].push({ id: doc.id, ...data });
+        if (publicPhotos[data.category]) publicPhotos[data.category].push({ id: doc.id, ...data });
       });
       renderPublicGallery();
       renderPublicPhotosList();
-      document.getElementById('totalPhotos').innerText = (publicPhotosCache.portraits.length + publicPhotosCache.events.length + publicPhotosCache.lifestyle.length);
+      document.getElementById('totalPhotos').innerText = (publicPhotos.portraits.length + publicPhotos.events.length + publicPhotos.lifestyle.length);
+      document.getElementById('statPhotos').innerText = (publicPhotos.portraits.length + publicPhotos.events.length + publicPhotos.lifestyle.length);
     }
 
     async function loadPrivateEvents() {
       const snapshot = await db.collection('privateEvents').get();
-      eventsCache = {};
-      const promises = [];
+      privateEvents = {};
       for (const doc of snapshot.docs) {
         const data = doc.data();
-        promises.push(
-          db.collection('privateEvents').doc(doc.id).collection('photos').get().then(photosSnapshot => {
-            eventsCache[doc.id] = { ...data, photoCount: photosSnapshot.size };
-          })
-        );
+        const photosSnapshot = await db.collection('privateEvents').doc(doc.id).collection('photos').get();
+        privateEvents[doc.id] = { ...data, photoCount: photosSnapshot.size };
       }
-      await Promise.all(promises);
       renderEventsList();
-      document.getElementById('totalEvents').innerText = Object.keys(eventsCache).length;
-      if (selectedEventCode && eventsCache[selectedEventCode]) await renderEventPhotos(selectedEventCode);
-      updateDashboard();
+      document.getElementById('totalEvents').innerText = Object.keys(privateEvents).length;
+      document.getElementById('statEvents').innerText = Object.keys(privateEvents).length;
+      document.getElementById('statClients').innerText = Object.keys(privateEvents).length;
+      if (selectedEventCode && privateEvents[selectedEventCode]) await renderEventPhotos(selectedEventCode);
     }
 
     async function renderEventPhotos(code) {
@@ -369,18 +339,18 @@
         <div class="photo-item">
           <img src="${photo.url}" loading="lazy">
           <div style="flex:1; font-size:11px;">${photo.name.substring(0,25)}</div>
-          <button onclick="window.deleteEventPhoto('${code}', '${photo.id}')" class="delete-photo-btn">🗑️</button>
+          <button onclick="deleteEventPhoto('${code}', '${photo.id}')" class="delete-photo-btn">🗑️</button>
         </div>
       `).join('');
     }
 
     function renderPublicGallery() {
-      const photos = publicPhotosCache[currentGallery] || [];
+      const photos = publicPhotos[currentGallery] || [];
       const container = document.getElementById('gallery');
       if (photos.length === 0) { container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px;">✨ Aucune photo</div>'; return; }
       container.innerHTML = photos.map((photo, idx) => `
         <div class="gallery-item">
-          <img src="${photo.url}" loading="lazy" onclick="openModalWithPhotos(${idx}, 'public', '${currentGallery}')">
+          <img src="${photo.url}" loading="lazy" onclick="openModalWithPhotos(${idx}, '${currentGallery}')">
           <button class="favorite-btn ${favorites.includes(photo.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${photo.id}')">❤️</button>
           <button class="select-btn ${selectedPhotos.includes(photo.id) ? 'selected' : ''}" onclick="event.stopPropagation(); toggleSelect('${photo.id}')">✓</button>
         </div>
@@ -391,21 +361,21 @@
 
     function renderPublicPhotosList() {
       const gallery = document.getElementById('publicGallerySelect').value;
-      const photos = publicPhotosCache[gallery] || [];
+      const photos = publicPhotos[gallery] || [];
       const container = document.getElementById('publicPhotosList');
-      if (photos.length === 0) { container.innerHTML = '<div style="padding:15px; text-align:center;">Aucune photo publique</div>'; return; }
+      if (photos.length === 0) { container.innerHTML = '<div style="padding:15px; text-align:center;">Aucune photo</div>'; return; }
       container.innerHTML = photos.map(photo => `
         <div class="photo-item">
           <img src="${photo.url}" loading="lazy">
           <div style="flex:1; font-size:11px;">${photo.name.substring(0,25)}</div>
-          <button onclick="window.deletePublicPhoto('${photo.id}')" class="delete-photo-btn">🗑️</button>
+          <button onclick="deletePublicPhoto('${photo.id}')" class="delete-photo-btn">🗑️</button>
         </div>
       `).join('');
     }
 
     function renderEventsList() {
       const searchTerm = document.getElementById('eventSearch')?.value.toLowerCase() || '';
-      let events = Object.values(eventsCache);
+      let events = Object.values(privateEvents);
       if (searchTerm) {
         events = events.filter(e => e.eventName.toLowerCase().includes(searchTerm) || e.clientName.toLowerCase().includes(searchTerm));
       }
@@ -414,26 +384,17 @@
       container.innerHTML = events.map(event => `
         <div class="event-item ${selectedEventCode === event.code ? 'active' : ''}">
           <div class="event-content" onclick="selectEvent('${event.code}')">
-            <strong>${event.eventName}</strong><br>
-            Client: ${event.clientName}<br>
-            <div class="event-code-display">📋 ${event.code.substring(0, 35)}...</div>
+            <strong>📅 ${event.eventName}</strong><br>
+            👤 ${event.clientName}<br>
+            <div class="event-code-display">🔑 ${event.code.substring(0, 35)}...</div>
             📸 ${event.photoCount || 0} photo(s)
           </div>
           <div class="event-actions">
-            <button class="btn-small" onclick="event.stopPropagation(); copyEventCode('${event.code}')">📋</button>
-            <button class="delete-event-btn" onclick="event.stopPropagation(); window.deleteEvent('${event.code}')">🗑️</button>
+            <button class="btn-small" onclick="event.stopPropagation(); copyCode('${event.code}')">📋</button>
+            <button class="delete-event-btn" onclick="event.stopPropagation(); deleteEvent('${event.code}')">🗑️</button>
           </div>
         </div>
       `).join('');
-    }
-
-    function updateDashboard() {
-      const totalPhotos = publicPhotosCache.portraits.length + publicPhotosCache.events.length + publicPhotosCache.lifestyle.length;
-      const totalEvents = Object.keys(eventsCache).length;
-      const totalClients = totalEvents;
-      document.getElementById('statPhotos').innerText = totalPhotos;
-      document.getElementById('statEvents').innerText = totalEvents;
-      document.getElementById('statClients').innerText = totalClients;
     }
 
     window.toggleSelect = function(id) {
@@ -450,8 +411,8 @@
       if (selectedPhotos.length === 0) { alert('Aucune photo sélectionnée'); return; }
       const zip = new JSZip();
       let count = 0;
-      for (let g in publicPhotosCache) {
-        for (let photo of publicPhotosCache[g]) {
+      for (let g in publicPhotos) {
+        for (let photo of publicPhotos[g]) {
           if (selectedPhotos.includes(photo.id)) {
             const response = await fetch(photo.url);
             const blob = await response.blob();
@@ -463,15 +424,16 @@
       const content = await zip.generateAsync({ type: "blob" });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(content);
-      link.download = `realfocus_selected_${Date.now()}.zip`;
+      link.download = `realfocus_${Date.now()}.zip`;
       link.click();
       alert(`✅ ${count} photo(s) téléchargée(s) !`);
     }
 
-    window.openModalWithPhotos = function(index, type, gallery) {
-      if (type === 'public') {
-        currentModalPhotos = publicPhotosCache[gallery] || [];
-      }
+    let currentModalPhotos = [];
+    let currentModalIndex = 0;
+
+    window.openModalWithPhotos = function(index, gallery) {
+      currentModalPhotos = publicPhotos[gallery] || [];
       currentModalIndex = index;
       if (currentModalPhotos[currentModalIndex]) {
         currentImageData = currentModalPhotos[currentModalIndex];
@@ -496,14 +458,21 @@
       }
     }
 
+    window.downloadPhoto = (url, name) => {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = name;
+      link.click();
+    };
+
     async function addPublicPhoto(file, category) {
       if (!requireAdmin()) return;
       try {
         const progressDiv = document.getElementById('uploadProgress');
         progressDiv.style.display = 'block';
         const fileName = `${Date.now()}_${file.name}`;
-        const downloadURL = await uploadToStorage(file, `public/${category}/${fileName}`);
-        await db.collection('publicPhotos').add({ category, url: downloadURL, name: file.name, timestamp: Date.now() });
+        const url = await uploadToStorage(file, `public/${category}/${fileName}`);
+        await db.collection('publicPhotos').add({ category, url, name: file.name, timestamp: Date.now() });
         progressDiv.style.display = 'none';
         alert('✅ Photo ajoutée !');
         await loadPublicPhotos();
@@ -516,9 +485,9 @@
         const progressDiv = document.getElementById('uploadProgress');
         progressDiv.style.display = 'block';
         const fileName = `${Date.now()}_${file.name}`;
-        const downloadURL = await uploadToStorage(file, `private/${code}/${fileName}`);
+        const url = await uploadToStorage(file, `private/${code}/${fileName}`);
         const photoId = `${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
-        await db.collection('privateEvents').doc(code).collection('photos').doc(photoId).set({ url: downloadURL, name: file.name, timestamp: Date.now() });
+        await db.collection('privateEvents').doc(code).collection('photos').doc(photoId).set({ url, name: file.name, timestamp: Date.now() });
         progressDiv.style.display = 'none';
         alert('✅ Photo ajoutée !');
         if (selectedEventCode === code) await renderEventPhotos(code);
@@ -527,19 +496,18 @@
     }
 
     window.deletePublicPhoto = async function(id) {
-      if (!requireAdmin() || !confirm('Supprimer cette photo ?')) return;
-      const photo = publicPhotosCache.portraits.find(p => p.id === id) || publicPhotosCache.events.find(p => p.id === id) || publicPhotosCache.lifestyle.find(p => p.id === id);
+      if (!requireAdmin() || !confirm('Supprimer ?')) return;
+      const photo = publicPhotos.portraits.find(p => p.id === id) || publicPhotos.events.find(p => p.id === id) || publicPhotos.lifestyle.find(p => p.id === id);
       if (photo && photo.url) {
         const path = decodeURIComponent(photo.url.split('/o/')[1]?.split('?')[0] || '');
         if (path) await storage.ref(path).delete().catch(e => console.log);
       }
       await db.collection('publicPhotos').doc(id).delete();
       await loadPublicPhotos();
-      alert('✅ Photo supprimée');
     };
 
     window.deleteEventPhoto = async function(eventCode, photoId) {
-      if (!requireAdmin() || !confirm('Supprimer cette photo ?')) return;
+      if (!requireAdmin() || !confirm('Supprimer ?')) return;
       const photoRef = db.collection('privateEvents').doc(eventCode).collection('photos').doc(photoId);
       const photo = await photoRef.get();
       if (photo.exists && photo.data().url) {
@@ -549,25 +517,22 @@
       await photoRef.delete();
       if (selectedEventCode === eventCode) await renderEventPhotos(eventCode);
       await loadPrivateEvents();
-      alert('✅ Photo supprimée');
     };
 
     window.deleteEvent = async function(eventCode) {
       if (!requireAdmin()) return;
-      const eventName = eventsCache[eventCode]?.eventName || 'cet événement';
-      if (!confirm(`⚠️ Supprimer définitivement "${eventName}" et TOUTES ses photos ?\n\nCette action est IRREVERSIBLE !`)) return;
+      const event = privateEvents[eventCode];
+      if (!confirm(`⚠️ Supprimer "${event?.eventName}" et toutes ses photos ?`)) return;
       try {
         const photos = await db.collection('privateEvents').doc(eventCode).collection('photos').get();
-        const batch = db.batch();
         for (const doc of photos.docs) {
           if (doc.data().url) {
             const path = decodeURIComponent(doc.data().url.split('/o/')[1]?.split('?')[0] || '');
             if (path) await storage.ref(path).delete().catch(e => console.log);
           }
-          batch.delete(doc.ref);
+          await doc.ref.delete();
         }
-        batch.delete(db.collection('privateEvents').doc(eventCode));
-        await batch.commit();
+        await db.collection('privateEvents').doc(eventCode).delete();
         if (selectedEventCode === eventCode) {
           selectedEventCode = null;
           document.getElementById('selectedEventName').innerHTML = '⬅️ Cliquez sur un événement';
@@ -587,7 +552,7 @@
       await db.collection('privateEvents').doc(code).set({ clientName: client, eventName: type, code: code, createdAt: Date.now() });
       document.getElementById('newClientName').value = '';
       document.getElementById('newEventName').value = '';
-      alert(`✅ Événement créé !\n\nCode client :\n${code}`);
+      alert(`✅ Événement créé !\n\nCode : ${code}`);
       await loadPrivateEvents();
     }
 
@@ -595,12 +560,12 @@
       if (!requireAdmin()) return;
       selectedEventCode = code;
       renderEventsList();
-      const event = eventsCache[code];
+      const event = privateEvents[code];
       if (event) document.getElementById('selectedEventName').innerHTML = `✅ ${event.eventName} - ${event.clientName}`;
       await renderEventPhotos(code);
     };
 
-    window.copyEventCode = (code) => { navigator.clipboard.writeText(code); alert('Code copié !'); };
+    window.copyCode = (code) => { navigator.clipboard.writeText(code); alert('Code copié !'); };
     
     window.toggleFavorite = (id) => {
       if (favorites.includes(id)) favorites = favorites.filter(f => f !== id);
@@ -614,30 +579,21 @@
       if (!code) { alert('Entrez un code'); return; }
       const eventDoc = await db.collection('privateEvents').doc(code).get();
       if (!eventDoc.exists) { document.getElementById('clientGallery').innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px;">❌ Code invalide</div>'; return; }
-      const photosSnapshot = await db.collection('privateEvents').doc(code).collection('photos').orderBy('timestamp', 'asc').get();
-      const photos = []; photosSnapshot.forEach(doc => photos.push({ id: doc.id, ...doc.data() }));
+      const photos = await db.collection('privateEvents').doc(code).collection('photos').orderBy('timestamp', 'asc').get();
       const container = document.getElementById('clientGallery');
-      if (photos.length === 0) { container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px;">📭 Aucune photo</div>'; return; }
-      container.innerHTML = photos.map((photo, idx) => `
-        <div class="gallery-item" style="position:relative">
-          <img src="${photo.url}" loading="lazy" onclick="openModal('${photo.url}', '${photo.name}')">
-          <button class="select-btn" style="bottom:8px; right:8px;" onclick="event.stopPropagation(); downloadPhoto('${photo.url}', '${photo.name}')">📥</button>
-        </div>
-      `).join('');
+      if (photos.empty) { container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px;">📭 Aucune photo</div>'; return; }
+      let html = '';
+      photos.forEach(doc => {
+        const p = doc.data();
+        html += `
+          <div class="gallery-item" style="position:relative">
+            <img src="${p.url}" loading="lazy" onclick="downloadPhoto('${p.url}', '${p.name}')">
+            <button class="select-btn" style="bottom:8px; right:8px;" onclick="event.stopPropagation(); downloadPhoto('${p.url}', '${p.name}')">📥</button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
     }
-
-    window.openModal = (url, name) => {
-      currentImageData = { url, name };
-      document.getElementById('modalImage').src = url;
-      document.getElementById('imageModal').style.display = 'flex';
-    };
-    
-    window.downloadPhoto = (url, name) => {
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = name;
-      link.click();
-    };
 
     function showSection(section) {
       document.getElementById('portfolio-section').style.display = section === 'portfolio' ? 'block' : 'none';
@@ -677,14 +633,17 @@
     };
     document.getElementById('adminPassword').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('submitPassword').click(); });
     document.getElementById('closeAdminBtn').onclick = () => document.getElementById('adminPanel').classList.remove('open');
-    document.getElementById('logoutAdminBtn').onclick = logoutAdmin;
+    document.getElementById('logoutAdminBtn').onclick = () => {
+      adminAuthenticated = false;
+      sessionStorage.removeItem('adminAuth');
+      document.getElementById('adminPanel').classList.remove('open');
+    };
     document.getElementById('createEventBtn').onclick = createEvent;
     document.getElementById('accessClientBtn').onclick = accessClientGallery;
     document.getElementById('cartBtn').onclick = downloadSelected;
-
     document.getElementById('eventSearch').addEventListener('input', () => renderEventsList());
 
-    // Upload events
+    // Upload
     const privateUpload = document.getElementById('privateUploadArea'), privateInput = document.getElementById('privateFileInput');
     privateUpload.onclick = () => { if (requireAdmin() && selectedEventCode) privateInput.click(); else if (!selectedEventCode) alert('Sélectionnez un événement'); };
     privateInput.onchange = (e) => { if (selectedEventCode) for (let f of e.target.files) addPrivatePhoto(f, selectedEventCode); privateInput.value = ''; };
@@ -712,7 +671,9 @@
 
     window.showSection = showSection;
     if (sessionStorage.getItem('adminAuth') === 'true') adminAuthenticated = true;
-    loadAllData();
+    
+    loadPublicPhotos();
+    loadPrivateEvents();
   })();
 </script>
 </body>
