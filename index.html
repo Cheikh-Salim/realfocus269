@@ -18,18 +18,9 @@
       --bg-card: #1a1a1a;
       --accent: #c0a040;
       --text-primary: #f0f0f0;
-      --text-secondary: #aaa;
       --danger: #ef4444;
-      --success: #10b981;
     }
-    body.light-mode {
-      --bg-primary: #f5f5f5;
-      --bg-secondary: #ffffff;
-      --bg-card: #ffffff;
-      --text-primary: #0a0a0a;
-      --text-secondary: #555;
-    }
-    body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); padding-bottom: 80px; transition: background 0.3s, color 0.3s; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); padding-bottom: 80px; }
     .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
     
     header {
@@ -50,7 +41,7 @@
     .hero { padding: 40px 0; text-align: center; }
     .hero h2 { font-size: 1.8rem; margin-bottom: 15px; }
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 15px; margin-top: 30px; }
-    .stat-card { background: var(--bg-card); padding: 15px; border-radius: 16px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .stat-card { background: var(--bg-card); padding: 15px; border-radius: 16px; text-align: center; }
     .stat-number { font-size: 2rem; font-weight: 800; color: var(--accent); }
     
     .gallery-tabs { display: flex; gap: 10px; justify-content: center; margin: 30px 0; flex-wrap: wrap; }
@@ -58,61 +49,47 @@
     .tab-btn.active, .tab-btn:hover { background: var(--accent); color: #0a0a0a; }
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 15px; margin: 20px 0; }
     @media (min-width: 768px) { .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); } }
-    .gallery-item { position: relative; border-radius: 16px; overflow: hidden; background: var(--bg-card); aspect-ratio: 1; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .gallery-item { position: relative; border-radius: 16px; overflow: hidden; background: var(--bg-card); aspect-ratio: 1; cursor: pointer; transition: transform 0.2s; }
     .gallery-item:hover { transform: scale(1.02); }
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
-    .favorite-btn, .select-btn { position: absolute; background: rgba(0,0,0,0.6); border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; color: white; z-index: 10; font-size: 12px; transition: 0.2s; }
-    .favorite-btn { top: 8px; right: 8px; }
-    .select-btn { bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); }
+    .favorite-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; color: white; z-index: 10; font-size: 12px; }
     .favorite-btn.active { color: #ff4444; }
-    .select-btn.selected { background: var(--accent); color: black; }
     
-    .form-container { max-width: 500px; margin: 0 auto; background: var(--bg-card); padding: 25px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .form-container { max-width: 500px; margin: 0 auto; background: var(--bg-card); padding: 25px; border-radius: 20px; }
     .form-group { margin-bottom: 15px; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; background: var(--bg-primary); border: 1px solid #333; border-radius: 8px; color: var(--text-primary); font-size: 16px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; background: var(--bg-primary); border: 1px solid #333; border-radius: 8px; color: white; font-size: 16px; }
     .btn-primary { background: var(--accent); color: #0a0a0a; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; font-size: 16px; transition: 0.2s; }
     .btn-primary:hover { transform: translateY(-2px); }
-    .btn-small { background: var(--accent); color: #0a0a0a; padding: 5px 10px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; margin-left: 8px; transition: 0.2s; }
+    .btn-small { background: var(--accent); color: #0a0a0a; padding: 5px 10px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; margin-left: 8px; }
     .btn-danger { background: var(--danger); color: white; }
     
-    .floating-cart { position: fixed; bottom: 80px; left: 16px; background: var(--accent); color: black; padding: 10px 16px; border-radius: 40px; cursor: pointer; z-index: 1000; font-weight: 600; font-size: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); transition: 0.2s; display: flex; gap: 8px; align-items: center; }
-    .floating-cart:hover { transform: scale(1.05); }
-    .admin-button { position: fixed; bottom: 20px; right: 16px; background: var(--accent); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; font-size: 22px; color: black; box-shadow: 0 2px 10px rgba(0,0,0,0.3); transition: 0.2s; }
-    .admin-button:hover { transform: scale(1.05); }
-    .theme-button { position: fixed; bottom: 20px; left: 16px; background: var(--bg-card); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; font-size: 18px; color: var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: 0.2s; }
+    .floating-cart { position: fixed; bottom: 80px; left: 16px; background: var(--accent); color: black; padding: 10px 16px; border-radius: 40px; cursor: pointer; z-index: 1000; font-weight: 600; font-size: 14px; }
+    .admin-button { position: fixed; bottom: 20px; right: 16px; background: var(--accent); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; font-size: 22px; color: black; }
     .admin-panel { position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100vh; background: var(--bg-secondary); border-left: 3px solid var(--accent); z-index: 2000; transition: right 0.3s ease; padding: 20px; overflow-y: auto; }
     .admin-panel.open { right: 0; }
-    .upload-area { border: 2px dashed var(--accent); border-radius: 16px; padding: 25px; text-align: center; margin: 15px 0; background: var(--bg-card); cursor: pointer; transition: 0.2s; }
-    .upload-area:hover { background: rgba(192,160,64,0.1); }
-    .event-item { background: var(--bg-card); padding: 12px; margin-bottom: 10px; border-radius: 12px; cursor: pointer; border-left: 3px solid var(--accent); transition: 0.2s; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-    .event-item:hover { background: rgba(192,160,64,0.1); }
-    .event-item.active { background: rgba(192,160,64,0.2); }
+    .upload-area { border: 2px dashed var(--accent); border-radius: 16px; padding: 25px; text-align: center; margin: 15px 0; background: var(--bg-card); cursor: pointer; }
+    .event-item { background: var(--bg-card); padding: 12px; margin-bottom: 10px; border-radius: 12px; cursor: pointer; border-left: 3px solid var(--accent); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .event-item.active { background: #2a2a2a; }
     .event-content { flex: 1; cursor: pointer; }
     .event-actions { display: flex; gap: 8px; }
     .event-code-display { font-size: 10px; color: var(--accent); word-break: break-all; margin-top: 5px; font-family: monospace; }
-    .close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+    .close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; align-items: center; justify-content: center; }
     .modal img { max-width: 90%; max-height: 70vh; border-radius: 12px; }
     .modal-close { position: absolute; top: 20px; right: 30px; font-size: 35px; cursor: pointer; color: white; }
-    .modal-controls { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 40px; }
-    .modal-controls button { background: var(--accent); color: black; border: none; padding: 8px 16px; border-radius: 40px; cursor: pointer; font-weight: bold; }
+    .download-modal-btn { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: black; padding: 10px 20px; border-radius: 40px; cursor: pointer; border: none; font-weight: bold; }
     .password-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 4000; align-items: center; justify-content: center; }
     .password-box { background: var(--bg-card); padding: 25px; border-radius: 20px; width: 280px; text-align: center; border: 2px solid var(--accent); }
-    .password-box input { width: 100%; padding: 12px; margin: 15px 0; background: var(--bg-primary); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); font-size: 16px; }
+    .password-box input { width: 100%; padding: 12px; margin: 15px 0; background: var(--bg-primary); border: 1px solid var(--accent); border-radius: 8px; color: white; font-size: 16px; }
     .social-links { display: flex; justify-content: center; gap: 25px; margin: 20px 0; }
-    .social-links a { color: var(--text-primary); font-size: 1.8rem; transition: 0.2s; }
-    .social-links a:hover { color: var(--accent); transform: translateY(-3px); }
+    .social-links a { color: white; font-size: 1.8rem; }
     .cloud-status { position: fixed; top: 70px; right: 10px; background: var(--bg-card); padding: 4px 10px; border-radius: 20px; font-size: 10px; border-left: 3px solid #10b981; z-index: 1000; }
     .photo-item { display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--bg-card); margin-bottom: 8px; border-radius: 8px; }
     .photo-item img { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; }
-    .delete-photo-btn { background: var(--danger); border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; color: white; transition: 0.2s; }
-    .delete-event-btn { background: var(--danger); border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; color: white; font-size: 11px; transition: 0.2s; }
+    .delete-photo-btn { background: var(--danger); border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; color: white; }
+    .delete-event-btn { background: var(--danger); border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; color: white; font-size: 11px; }
     .loading { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--accent); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-left: 10px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .dashboard-stats { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 20px; }
-    .dashboard-card { background: var(--bg-card); padding: 12px; border-radius: 12px; text-align: center; }
-    .dashboard-number { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
-    .search-input { width: 100%; padding: 10px; margin: 10px 0; background: var(--bg-primary); border: 1px solid var(--accent); border-radius: 8px; color: var(--text-primary); }
     @media (max-width: 768px) { .hero h2 { font-size: 1.5rem; } .nav-links li { font-size: 12px; padding: 4px 10px; } }
   </style>
 </head>
@@ -187,23 +164,13 @@
   </div>
 </main>
 
-<div class="floating-cart" id="cartBtn">
-  <i class="fas fa-heart"></i> <span id="cartCount">0</span>
-  <span id="selectedCount" style="margin-left:8px; border-left:1px solid rgba(0,0,0,0.2); padding-left:8px;"></span>
-</div>
+<div class="floating-cart" id="cartBtn">❤️ <span id="cartCount">0</span></div>
 <button class="admin-button" id="adminBtn">👑</button>
-<button class="theme-button" id="themeBtn">🌙</button>
 
 <div id="adminPanel" class="admin-panel">
   <button class="close-btn" id="closeAdminBtn">✕</button>
   <h3>Administration</h3>
   <hr style="margin:10px 0;">
-
-  <div class="dashboard-stats" id="dashboardStats">
-    <div class="dashboard-card"><div class="dashboard-number" id="statPhotos">0</div><div>Photos</div></div>
-    <div class="dashboard-card"><div class="dashboard-number" id="statEvents">0</div><div>Événements</div></div>
-    <div class="dashboard-card"><div class="dashboard-number" id="statClients">0</div><div>Clients</div></div>
-  </div>
 
   <h4>📅 Créer un événement client</h4>
   <input type="text" id="newClientName" placeholder="Nom du client" style="width:100%; padding:10px; margin:8px 0; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:white;">
@@ -211,7 +178,6 @@
   <button id="createEventBtn" class="btn-primary">✅ Générer un code</button>
 
   <h4 style="margin-top:20px;">📋 Événements clients</h4>
-  <input type="text" id="eventSearch" class="search-input" placeholder="🔍 Rechercher...">
   <div id="eventsList"></div>
 
   <h4 style="margin-top:20px;">📤 Ajouter des photos</h4>
@@ -256,11 +222,7 @@
 <div id="imageModal" class="modal">
   <span class="modal-close">&times;</span>
   <img id="modalImage" src="">
-  <div class="modal-controls">
-    <button id="modalPrevBtn">◀</button>
-    <button id="modalDownloadBtn">📥</button>
-    <button id="modalNextBtn">▶</button>
-  </div>
+  <button class="download-modal-btn" id="downloadModalBtn">📥 Télécharger</button>
 </div>
 
 <script>
@@ -283,7 +245,6 @@
     let selectedEventCode = null;
     let currentImageData = null;
     let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    let selectedPhotos = JSON.parse(localStorage.getItem('selectedPhotos') || '[]');
     let adminAuthenticated = false;
     let publicPhotos = { portraits: [], events: [], lifestyle: [] };
     let privateEvents = {};
@@ -311,7 +272,6 @@
       renderPublicGallery();
       renderPublicPhotosList();
       document.getElementById('totalPhotos').innerText = (publicPhotos.portraits.length + publicPhotos.events.length + publicPhotos.lifestyle.length);
-      document.getElementById('statPhotos').innerText = (publicPhotos.portraits.length + publicPhotos.events.length + publicPhotos.lifestyle.length);
     }
 
     async function loadPrivateEvents() {
@@ -324,8 +284,6 @@
       }
       renderEventsList();
       document.getElementById('totalEvents').innerText = Object.keys(privateEvents).length;
-      document.getElementById('statEvents').innerText = Object.keys(privateEvents).length;
-      document.getElementById('statClients').innerText = Object.keys(privateEvents).length;
       if (selectedEventCode && privateEvents[selectedEventCode]) await renderEventPhotos(selectedEventCode);
     }
 
@@ -348,15 +306,13 @@
       const photos = publicPhotos[currentGallery] || [];
       const container = document.getElementById('gallery');
       if (photos.length === 0) { container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px;">✨ Aucune photo</div>'; return; }
-      container.innerHTML = photos.map((photo, idx) => `
+      container.innerHTML = photos.map(photo => `
         <div class="gallery-item">
-          <img src="${photo.url}" loading="lazy" onclick="openModalWithPhotos(${idx}, '${currentGallery}')">
+          <img src="${photo.url}" loading="lazy" onclick="openModal('${photo.url}', '${photo.name}')">
           <button class="favorite-btn ${favorites.includes(photo.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${photo.id}')">❤️</button>
-          <button class="select-btn ${selectedPhotos.includes(photo.id) ? 'selected' : ''}" onclick="event.stopPropagation(); toggleSelect('${photo.id}')">✓</button>
         </div>
       `).join('');
       document.getElementById('cartCount').innerText = favorites.length;
-      document.getElementById('selectedCount').innerHTML = `📦 ${selectedPhotos.length}`;
     }
 
     function renderPublicPhotosList() {
@@ -374,19 +330,15 @@
     }
 
     function renderEventsList() {
-      const searchTerm = document.getElementById('eventSearch')?.value.toLowerCase() || '';
-      let events = Object.values(privateEvents);
-      if (searchTerm) {
-        events = events.filter(e => e.eventName.toLowerCase().includes(searchTerm) || e.clientName.toLowerCase().includes(searchTerm));
-      }
+      const events = Object.values(privateEvents);
       const container = document.getElementById('eventsList');
       if (events.length === 0) { container.innerHTML = '<div style="padding:15px; text-align:center;">Aucun événement</div>'; return; }
       container.innerHTML = events.map(event => `
         <div class="event-item ${selectedEventCode === event.code ? 'active' : ''}">
           <div class="event-content" onclick="selectEvent('${event.code}')">
-            <strong>📅 ${event.eventName}</strong><br>
-            👤 ${event.clientName}<br>
-            <div class="event-code-display">🔑 ${event.code.substring(0, 35)}...</div>
+            <strong>${event.eventName}</strong><br>
+            Client: ${event.clientName}<br>
+            <div class="event-code-display">📋 ${event.code.substring(0, 35)}...</div>
             📸 ${event.photoCount || 0} photo(s)
           </div>
           <div class="event-actions">
@@ -396,74 +348,6 @@
         </div>
       `).join('');
     }
-
-    window.toggleSelect = function(id) {
-      if (selectedPhotos.includes(id)) {
-        selectedPhotos = selectedPhotos.filter(p => p !== id);
-      } else {
-        selectedPhotos.push(id);
-      }
-      localStorage.setItem('selectedPhotos', JSON.stringify(selectedPhotos));
-      renderPublicGallery();
-    };
-
-    async function downloadSelected() {
-      if (selectedPhotos.length === 0) { alert('Aucune photo sélectionnée'); return; }
-      const zip = new JSZip();
-      let count = 0;
-      for (let g in publicPhotos) {
-        for (let photo of publicPhotos[g]) {
-          if (selectedPhotos.includes(photo.id)) {
-            const response = await fetch(photo.url);
-            const blob = await response.blob();
-            zip.file(photo.name, blob);
-            count++;
-          }
-        }
-      }
-      const content = await zip.generateAsync({ type: "blob" });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(content);
-      link.download = `realfocus_${Date.now()}.zip`;
-      link.click();
-      alert(`✅ ${count} photo(s) téléchargée(s) !`);
-    }
-
-    let currentModalPhotos = [];
-    let currentModalIndex = 0;
-
-    window.openModalWithPhotos = function(index, gallery) {
-      currentModalPhotos = publicPhotos[gallery] || [];
-      currentModalIndex = index;
-      if (currentModalPhotos[currentModalIndex]) {
-        currentImageData = currentModalPhotos[currentModalIndex];
-        document.getElementById('modalImage').src = currentImageData.url;
-        document.getElementById('imageModal').style.display = 'flex';
-      }
-    };
-
-    function modalPrev() {
-      if (currentModalIndex > 0) {
-        currentModalIndex--;
-        currentImageData = currentModalPhotos[currentModalIndex];
-        document.getElementById('modalImage').src = currentImageData.url;
-      }
-    }
-
-    function modalNext() {
-      if (currentModalIndex < currentModalPhotos.length - 1) {
-        currentModalIndex++;
-        currentImageData = currentModalPhotos[currentModalIndex];
-        document.getElementById('modalImage').src = currentImageData.url;
-      }
-    }
-
-    window.downloadPhoto = (url, name) => {
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = name;
-      link.click();
-    };
 
     async function addPublicPhoto(file, category) {
       if (!requireAdmin()) return;
@@ -588,12 +472,25 @@
         html += `
           <div class="gallery-item" style="position:relative">
             <img src="${p.url}" loading="lazy" onclick="downloadPhoto('${p.url}', '${p.name}')">
-            <button class="select-btn" style="bottom:8px; right:8px;" onclick="event.stopPropagation(); downloadPhoto('${p.url}', '${p.name}')">📥</button>
+            <button class="btn-small" style="position:absolute; bottom:8px; right:8px;" onclick="event.stopPropagation(); downloadPhoto('${p.url}', '${p.name}')">📥</button>
           </div>
         `;
       });
       container.innerHTML = html;
     }
+
+    window.downloadPhoto = (url, name) => {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = name;
+      link.click();
+    };
+
+    window.openModal = (url, name) => {
+      currentImageData = { url, name };
+      document.getElementById('modalImage').src = url;
+      document.getElementById('imageModal').style.display = 'flex';
+    };
 
     function showSection(section) {
       document.getElementById('portfolio-section').style.display = section === 'portfolio' ? 'block' : 'none';
@@ -610,14 +507,6 @@
         renderPublicGallery();
       };
     });
-
-    // Theme toggle
-    let isDark = true;
-    document.getElementById('themeBtn').onclick = () => {
-      isDark = !isDark;
-      document.body.classList.toggle('light-mode', !isDark);
-      document.getElementById('themeBtn').innerHTML = isDark ? '🌙' : '☀️';
-    };
 
     // Admin
     document.getElementById('adminBtn').onclick = () => {
@@ -640,10 +529,29 @@
     };
     document.getElementById('createEventBtn').onclick = createEvent;
     document.getElementById('accessClientBtn').onclick = accessClientGallery;
-    document.getElementById('cartBtn').onclick = downloadSelected;
-    document.getElementById('eventSearch').addEventListener('input', () => renderEventsList());
+    document.getElementById('cartBtn').onclick = () => {
+      const selected = [];
+      for (let g in publicPhotos) {
+        publicPhotos[g].forEach(photo => {
+          if (favorites.includes(photo.id)) selected.push(photo);
+        });
+      }
+      if (selected.length === 0) { alert('Aucun favori'); return; }
+      const zip = new JSZip();
+      Promise.all(selected.map(async photo => {
+        const response = await fetch(photo.url);
+        const blob = await response.blob();
+        zip.file(photo.name, blob);
+      })).then(async () => {
+        const content = await zip.generateAsync({ type: "blob" });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = `realfocus_${Date.now()}.zip`;
+        link.click();
+      });
+    };
 
-    // Upload
+    // Upload events
     const privateUpload = document.getElementById('privateUploadArea'), privateInput = document.getElementById('privateFileInput');
     privateUpload.onclick = () => { if (requireAdmin() && selectedEventCode) privateInput.click(); else if (!selectedEventCode) alert('Sélectionnez un événement'); };
     privateInput.onchange = (e) => { if (selectedEventCode) for (let f of e.target.files) addPrivatePhoto(f, selectedEventCode); privateInput.value = ''; };
@@ -665,9 +573,7 @@
 
     document.querySelector('.modal-close').onclick = () => document.getElementById('imageModal').style.display = 'none';
     document.getElementById('imageModal').onclick = (e) => { if (e.target === document.getElementById('imageModal')) document.getElementById('imageModal').style.display = 'none'; };
-    document.getElementById('modalDownloadBtn').onclick = () => { if (currentImageData) downloadPhoto(currentImageData.url, currentImageData.name); };
-    document.getElementById('modalPrevBtn').onclick = modalPrev;
-    document.getElementById('modalNextBtn').onclick = modalNext;
+    document.getElementById('downloadModalBtn').onclick = () => { if (currentImageData) downloadPhoto(currentImageData.url, currentImageData.name); };
 
     window.showSection = showSection;
     if (sessionStorage.getItem('adminAuth') === 'true') adminAuthenticated = true;
